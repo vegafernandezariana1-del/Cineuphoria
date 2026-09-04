@@ -1,6 +1,9 @@
+const path = require("path");
 const dotenv = require("dotenv");
 
-dotenv.config({ path: process.env.DOTENV_CONFIG_PATH || "../../.env" });
+dotenv.config({
+  path: process.env.DOTENV_CONFIG_PATH || path.resolve(__dirname, "../../../.env")
+});
 
 const required = ["DB_HOST", "DB_USER", "DB_NAME", "JWT_SECRET"];
 const missing = required.filter((key) => !process.env[key]);
