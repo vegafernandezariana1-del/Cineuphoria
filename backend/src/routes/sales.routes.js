@@ -1,0 +1,1 @@
+const {Router}=require('express');const {create}=require('../controllers/sales.controller');const {authenticate}=require('../middleware/auth.middleware');const r=Router();r.post('/',authenticate,create);module.exports=r;

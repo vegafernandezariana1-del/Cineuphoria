@@ -14,7 +14,10 @@ if (missing.length > 0) {
 
 module.exports = {
   port: Number(process.env.PORT || 3307),
-  corsOrigin: process.env.CORS_ORIGIN || "http://localhost:3000",
+  corsOrigin: (process.env.CORS_ORIGIN || "http://localhost:3000")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
   db: {
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT || 3306),

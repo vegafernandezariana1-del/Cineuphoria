@@ -1,32 +1,25 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cineuphoria | Iniciar sesión</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cineuphoria | Compra tus entradas</title>
+  <link rel="stylesheet" href="css/styles.css?v=2">
 </head>
 <body>
-  <main class="page">
-    <section class="auth-card" aria-labelledby="title">
-      <p class="eyebrow">Cineuphoria</p>
-      <h1 id="title">Tu próxima función empieza aquí</h1>
-      <p class="intro">Inicia sesión para continuar con la compra de tus entradas.</p>
-      <form id="login-form" novalidate>
-        <label for="email">Correo electrónico</label>
-        <input id="email" name="email" type="email" autocomplete="email" required>
-        <label for="password">Contraseña</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8">
-        <button type="submit">Iniciar sesión</button>
-      </form>
-      <p id="message" class="message" role="alert" aria-live="polite"></p>
-      <section id="session" class="session hidden" aria-live="polite">
-        <h2 id="welcome"></h2>
-        <p>Tu sesión está activa. Ya puedes continuar con la selección de película y funciones.</p>
-        <button id="logout" class="secondary" type="button">Cerrar sesión</button>
-      </section>
+  <header class="nav"><a class="brand" href="#inicio"><span>▶</span> CINEUPHORIA</a><nav><a href="#cartelera">Cartelera</a><a href="#compra">Comprar</a></nav><button id="account-button" class="outline">Iniciar sesión</button></header>
+  <main>
+    <section id="inicio" class="hero"><div><p class="eyebrow">TU CINE, TU HISTORIA</p><h1>La experiencia empieza<br>antes de la función.</h1><p>Elige tu película, reserva tu asiento y añade tus favoritos en una sola compra.</p><a class="primary" href="#cartelera">Ver cartelera</a></div></section>
+    <section id="cartelera" class="section"><div class="section-title"><div><p class="eyebrow">EN CARTELERA</p><h2>Películas disponibles</h2></div><span id="catalog-status">Cargando cartelera…</span></div><div id="movie-list" class="movie-grid"></div></section>
+    <section id="compra" class="section purchase"><div><p class="eyebrow">COMPRA EN LÍNEA</p><h2>Completa tu venta</h2><p class="muted">1. Película → 2. Función → 3. Asientos → 4. Extras y pago</p></div>
+      <div class="steps">
+        <article><h3>1. Función</h3><div id="selected-movie" class="selection">Elige una película de la cartelera.</div><div id="showtime-list" class="chips"></div></article>
+        <article><h3>2. Asientos</h3><div class="screen">PANTALLA</div><div id="seat-list" class="seats"></div><p class="muted">Disponible <i class="legend free"></i> Seleccionado <i class="legend selected"></i> Vendido <i class="legend sold"></i></p></article>
+        <article><h3>3. Dulcería</h3><div id="product-list" class="products"></div></article>
+        <article><h3>4. Pago</h3><div id="customer-fields" class="customer hidden"><p>Estos datos se guardan una sola vez para tu compra.</p><input id="customer-name" placeholder="Nombre"><input id="customer-lastname" placeholder="Apellido"><input id="customer-ci" placeholder="CI"><input id="customer-phone" placeholder="Teléfono (opcional)"></div><label for="payment-select">Método de pago</label><select id="payment-select"><option value="">Elige una opción</option></select><div id="summary" class="summary">Selecciona una función y asientos para ver tu total.</div><button id="buy-button" class="primary wide" disabled>Confirmar venta</button><p id="purchase-message" class="message" aria-live="polite"></p></article>
+      </div>
     </section>
   </main>
-  <script src="js/app.js"></script>
-</body>
-</html>
+  <footer>© Cineuphoria · Compra rápida y segura</footer>
+  <dialog id="auth-dialog"><button class="close" id="close-auth" aria-label="Cerrar">×</button><h2 id="auth-title">Inicia sesión</h2><p id="auth-help">Necesitas una cuenta para confirmar la venta.</p><form id="auth-form"><input name="email" type="email" placeholder="Correo electrónico" required><input name="password" type="password" minlength="8" placeholder="Contraseña (mínimo 8 caracteres)" required><button class="primary wide" type="submit">Continuar</button></form><button id="toggle-auth" class="link-button">Crear una cuenta</button><p id="auth-message" class="message"></p></dialog>
+  <script src="js/app.js?v=2"></script>
+</body></html>

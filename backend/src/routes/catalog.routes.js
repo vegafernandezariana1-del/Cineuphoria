@@ -1,0 +1,1 @@
+const {Router}=require('express');const c=require('../controllers/catalog.controller');const r=Router();r.get('/movies',c.movies);r.get('/showtimes',c.showtimes);r.get('/showtimes/:id/seats',c.seats);r.get('/products',c.products);r.get('/payments',c.payments);module.exports=r;
