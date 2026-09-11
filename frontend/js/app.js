@@ -1,70 +1,32 @@
 const API_BASE_URL = "http://localhost:3307";
 const TOKEN_KEY = "cineuphoria_token";
-
-const form = document.querySelector("#login-form");
-const message = document.querySelector("#message");
-const session = document.querySelector("#session");
-const welcome = document.querySelector("#welcome");
-const logoutButton = document.querySelector("#logout");
-
-function showMessage(text = "") { message.textContent = text; }
-
-function setLoggedOut() {
-  localStorage.removeItem(TOKEN_KEY);
-  form.classList.remove("hidden");
-  session.classList.add("hidden");
-  form.reset();
-}
-
-function setLoggedIn(email) {
-  welcome.textContent = `Bienvenido ${email}`;
-  form.classList.add("hidden");
-  session.classList.remove("hidden");
-  showMessage();
-}
-
-async function loadProfile(token) {
-  const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || "No se pudo validar la sesión");
-  return data.user;
-}
-
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  showMessage();
-  const email = form.email.value.trim();
-  const password = form.password.value;
-  if (!email || !password) return showMessage("Completa tu correo y contraseña.");
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok || !data.token) throw new Error(data.error || "No fue posible iniciar sesión");
-    localStorage.setItem(TOKEN_KEY, data.token);
-    const user = await loadProfile(data.token);
-    setLoggedIn(user.email);
-  } catch (error) {
-    setLoggedOut();
-    showMessage(error.message || "Ocurrió un error al iniciar sesión.");
-  }
-});
-
-logoutButton.addEventListener("click", setLoggedOut);
-
-(async function restoreSession() {
-  const token = localStorage.getItem(TOKEN_KEY);
-  if (!token) return;
-  try {
-    const user = await loadProfile(token);
-    setLoggedIn(user.email);
-  } catch {
-    setLoggedOut();
-  }
-}());
+let token = localStorage.getItem(TOKEN_KEY);
+let currentFunction = null;
+let seats = [];
+let selectedSeats = new Map();
+let products = [];
+let productCart = new Map();
+const $ = id => document.getElementById(id);
+const loginView = $("login-view"), saleView = $("sale-view"), confirmation = $("confirmation");
+const loginForm = $("login-form"), message = $("message"), movie = $("movie"), fnSelect = $("function");
+const seatMap = $("seat-map"), productsBox = $("products"), payment = $("payment");
+function money(v){return `Bs ${Number(v||0).toFixed(2)}`;}
+function showMessage(t=""){message.textContent=t;}
+function authHeaders(json=false){return {Authorization:`Bearer ${token}`,...(json?{"Content-Type":"application/json"}:{})};}
+async function api(path,options={}){const r=await fetch(`${API_BASE_URL}${path}`,{...options,headers:{...authHeaders(Boolean(options.body)),...(options.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"No fue posible completar la operación");return d;}
+function setLoggedOut(){token=null;localStorage.removeItem(TOKEN_KEY);loginView.classList.remove("hidden");saleView.classList.add("hidden");confirmation.classList.add("hidden");}
+async function startApp(){if(!token)return setLoggedOut();try{const p=await api("/api/auth/me");$("welcome").textContent=`Usuario: ${p.user.email}`;loginView.classList.add("hidden");saleView.classList.remove("hidden");await Promise.all([loadMovies(),loadProducts(),loadPaymentMethods()]);}catch{setLoggedOut();}}
+loginForm.addEventListener("submit",async e=>{e.preventDefault();showMessage();try{const r=await fetch(`${API_BASE_URL}/api/auth/login`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:loginForm.email.value.trim(),password:loginForm.password.value})});const d=await r.json().catch(()=>({}));if(!r.ok||!d.token)throw new Error(d.error||"No fue posible iniciar sesión");token=d.token;localStorage.setItem(TOKEN_KEY,token);await startApp();}catch(err){showMessage(err.message);}});
+async function loadMovies(){const d=await api("/api/sales/movies");movie.innerHTML=`<option value="">Selecciona una película</option>`+d.movies.map(m=>`<option value="${m.id}">${m.titulo} · ${m.clasificacion}</option>`).join("");}
+movie.addEventListener("change",async()=>{fnSelect.disabled=true;fnSelect.innerHTML="<option>Cargando funciones...</option>";resetSeats();if(!movie.value)return fnSelect.innerHTML="<option value=\"\">Selecciona una función</option>";try{const d=await api(`/api/sales/functions?peliculaId=${movie.value}`);fnSelect.innerHTML=`<option value="">Selecciona una función</option>`+d.functions.map(f=>`<option value="${f.id}">${new Date(`${f.fecha}T${f.horaInicio}`).toLocaleDateString("es-BO")} · ${String(f.horaInicio).slice(0,5)} · ${f.sala} · ${money(f.precio)}</option>`).join("");fnSelect.disabled=false;}catch(err){fnSelect.innerHTML=`<option value="">${err.message}</option>`;}});
+fnSelect.addEventListener("change",async()=>{resetSeats();if(!fnSelect.value)return;try{const d=await api(`/api/sales/functions/${fnSelect.value}/seats`);currentFunction=d.function;seats=d.seats;renderSeats();updateSummary();}catch(err){showMessage(err.message);}});
+function resetSeats(){currentFunction=null;seats=[];selectedSeats.clear();seatMap.innerHTML="<p>Selecciona una función.</p>";updateSummary();}
+function renderSeats(){seatMap.innerHTML="";seats.forEach(s=>{const b=document.createElement("button");b.type="button";b.className=`seat ${s.estado==="ocupado"?"occupied":""}`;b.textContent=`${s.fila}${s.numero}`;b.disabled=s.estado==="ocupado";if(selectedSeats.has(s.id))b.classList.add("selected");b.addEventListener("click",()=>{if(selectedSeats.has(s.id))selectedSeats.delete(s.id);else selectedSeats.set(s.id,{asientoId:s.id,tipoEntrada:"Adulto"});b.classList.toggle("selected");updateSummary();});seatMap.appendChild(b);});}
+async function loadProducts(){const d=await api("/api/sales/products");products=d.products;renderProducts();}
+function renderProducts(){productsBox.innerHTML=products.length?products.map(p=>`<div class="product-row"><span>${p.nombre} · ${money(p.precio)} · stock ${p.stock}</span><strong>${productCart.get(p.id)||0}</strong><button type="button" data-product="${p.id}">+</button></div>`).join(""):"<p>No hay productos disponibles.</p>";productsBox.querySelectorAll("button[data-product]").forEach(b=>b.addEventListener("click",()=>{const id=Number(b.dataset.product),q=productCart.get(id)||0,p=products.find(x=>x.id===id);if(q<p.stock)productCart.set(id,q+1);renderProducts();updateSummary();}));}
+async function loadPaymentMethods(){const d=await api("/api/sales/payment-methods");payment.innerHTML=`<option value="">Selecciona un método</option>`+d.paymentMethods.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join("");}
+function productTotal(){return[...productCart.entries()].reduce((sum,[id,q])=>{const p=products.find(x=>x.id===id);return sum+(p?Number(p.precio)*q:0);},0);}
+function updateSummary(){const t=selectedSeats.size*Number(currentFunction?.precio||0),pt=productTotal();$("ticket-count").textContent=selectedSeats.size;$("product-total").textContent=money(pt);$("total").textContent=money(t+pt);}
+$("confirm-sale").addEventListener("click",async()=>{showMessage();if(!currentFunction||!selectedSeats.size)return showMessage("Selecciona una función y al menos un asiento.");if(!payment.value)return showMessage("Selecciona un método de pago.");if(!$("client-name").value.trim()||!$("client-lastname").value.trim()||!$("client-ci").value.trim())return showMessage("Completa nombre, apellido y CI del cliente.");const body={funcionId:Number(currentFunction.id),metodoPagoId:Number(payment.value),cliente:{nombre:$("client-name").value.trim(),apellido:$("client-lastname").value.trim(),ci:$("client-ci").value.trim(),telefono:$("client-phone").value.trim()||null,email:$("client-email").value.trim()||null},entradas:[...selectedSeats.values()],productos:[...productCart.entries()].map(([productoId,cantidad])=>({productoId,cantidad}))};try{const d=await api("/api/sales",{method:"POST",body:JSON.stringify(body)});saleView.classList.add("hidden");confirmation.classList.remove("hidden");$("confirmation-total").textContent=`Total registrado: ${money(d.sale.total)}`;$("ticket-list").innerHTML=d.tickets.map(t=>`<div class="ticket"><strong>${t.titulo}</strong><br>Asiento ${t.fila}${t.numero} · ${t.tipoEntrada}<br>${t.sala} · ${String(t.horaInicio).slice(0,5)} · ${money(t.total)}</div>`).join("");}catch(err){showMessage(err.message);}});
+$("new-sale").addEventListener("click",()=>{confirmation.classList.add("hidden");saleView.classList.remove("hidden");movie.value="";fnSelect.innerHTML="<option value=\"\">Selecciona una función</option>";fnSelect.disabled=true;productCart.clear();selectedSeats.clear();resetSeats();renderProducts();payment.value="";["client-name","client-lastname","client-ci","client-phone","client-email"].forEach(id=>$(id).value="");});
+$("logout").addEventListener("click",setLoggedOut);startApp();
