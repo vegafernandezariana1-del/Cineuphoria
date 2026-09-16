@@ -37,7 +37,9 @@ async function chooseShowtime(show, button) {
   try { state.seats = await api(`/api/catalog/showtimes/${show.id}/seats`); renderSeats(); renderSummary(); } catch (e) { showPurchase(e.message); }
 }
 function renderMovies() {
-  $('#movie-list').innerHTML = state.movies.map(m => `<button class="movie" data-id="${m.id}"><div class="poster">${m.titulo}</div><div class="movie-info"><strong>${m.titulo}</strong><p>★ ${m.clasificacion || 'Cine'} · ${m.duracionMinutos || '?'} min</p><small>Elegir función</small></div></button>`).join('');
+  $('#movie-list').innerHTML = state.movies.map(m => `<button class="movie" data-id="${m.id}"><div class="poster">
+    <img src="img/peliculas/amor-bajo-la-lluvia.jpeg" alt="${m.titulo}">
+</div><div class="movie-info"><strong>${m.titulo}</strong><p>★ ${m.clasificacion || 'Cine'} · ${m.duracionMinutos || '?'} min</p><small>Elegir función</small></div></button>`).join('');
   document.querySelectorAll('.movie').forEach(b => b.onclick = () => { chooseMovie(Number(b.dataset.id)); document.querySelector('#compra').scrollIntoView({behavior:'smooth'}); });
 }
 function updateAccount() { $('#account-button').textContent = state.user ? `Salir · ${state.user.email}` : 'Iniciar sesión'; $('#customer-fields').classList.toggle('hidden', !state.user); }
