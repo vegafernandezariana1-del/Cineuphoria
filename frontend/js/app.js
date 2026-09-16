@@ -4,6 +4,38 @@ const state = { movies: [], movie: null, showtime: null, seats: [], chosenSeats:
 const $ = (selector) => document.querySelector(selector);
 const money = (value) => `Bs ${Number(value || 0).toFixed(2)}`;
 const authHeaders = () => ({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem(TOKEN)}` });
+const posters = {
+  "Horizonte Final": "horizonte-final.jpg",
+  "La Ultima Risa": "la-ultima-risa.jpeg",
+  "Sombras en la Casa": "sombras-en-la-casa.jpg",
+  "Ecos del Pasado": "ecos-del-pasado.jpg",
+  "Aventura Pixel": "aventura-pixel.jpg",
+  "Planeta Aurora": "planeta-aurora.jpg",
+  "Cartas de Invierno": "cartas-de-invierno.jpg",
+  "El Tesoro Perdido": "el-tesoro-perdido.jpg",
+  "Mision Andina": null,
+  "Risas de Familia": null,
+  "Noche Sin Salida": null,
+  "El Ultimo Camino": null,
+  "Pequeños Heroes": null,
+  "Galaxia Perdida": null,
+  "Amor en Cochabamba": "amor-en-cochabamba.jpeg",
+  "Ruta de los Exploradores": "ruta-de-los-exploradores.jpeg",
+  "Codigo de Fuego": null,
+  "La Cena Perfecta": "la-cena-perfecta.jpeg",
+  "Guardianes del Valle": "guardianes-del-valle.jpg",
+  "El Misterio del Lago": "el-misterio-del-lago.jpeg",
+  "Código Cochabamba": "codigo-en-cochabamba.jpeg",
+  "Una Noche de Verano": "una-noche-de-verano.jpeg",
+  "Viaje a las Estrellas": "viaje-a-las-estrellas.jpeg",
+  "El Último Guardián": "el-ultimo-guardian.jpeg",
+  "Pequeñas Aventuras": "pequenas-aventuras.jpg",
+  "Historias de Barrio": "historias-de-barrio.jpg",
+  "La Casa del Bosque": "la-casa-del-bosque.jpeg",
+  "Destino Infinito": "destino-infinito.jpeg",
+  "Amor Bajo la Lluvia": "amor-bajo-la-lluvia.jpeg",
+  "El Gran Escape": "el-gran-escape.jpg"
+};
 
 async function api(path, options = {}) {
   const response = await fetch(`${API}${path}`, options);
@@ -40,7 +72,7 @@ function renderMovies() {
   $('#movie-list').innerHTML = state.movies.map(m => `
   <button class="movie" data-id="${m.id}">
     <div class="poster">
-      <img src="img/peliculas/amor-bajo-la-lluvia.jpeg" alt="${m.titulo}">
+    <img src="img/peliculas/${posters[m.titulo]}" alt="${m.titulo}">
     </div>
 
     <div class="movie-info">
