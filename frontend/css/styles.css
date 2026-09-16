@@ -1,4 +1,21 @@
-:root{--bg:#0b1320;--panel:#111d2d;--line:#2a3d56;--text:#edf5ff;--muted:#9aaabd;--blue:#1688f5;--gold:#ffc653;--danger:#573442}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px Arial,sans-serif}.nav{height:70px;padding:0 6%;display:flex;align-items:center;gap:32px;background:#0d1827;border-bottom:1px solid #1d3046;position:sticky;top:0;z-index:5}.brand{font-weight:800;color:white;text-decoration:none;letter-spacing:.5px}.brand span{color:var(--blue)}nav{display:flex;gap:23px;flex:1}nav a{color:#c0cedd;text-decoration:none;font-size:14px}.outline,.link-button{background:transparent;border:1px solid #54708c;color:#e8f2ff;padding:10px 16px;border-radius:6px;cursor:pointer}.hero{min-height:440px;padding:90px 9%;display:flex;align-items:center;background:linear-gradient(90deg,#07111ddd 23%,#07111d99 65%,#07111d00),radial-gradient(circle at 78% 45%,#2b6d91,#12243d 35%,#07111d 70%)}.hero>div{max-width:650px}.eyebrow{color:var(--gold);font-size:12px;font-weight:bold;letter-spacing:1.5px}.hero h1{font-size:clamp(36px,5vw,65px);margin:12px 0}.hero p{line-height:1.55;color:#c0cedd}.primary{display:inline-block;background:var(--blue);color:white;border:0;padding:12px 20px;border-radius:6px;text-decoration:none;cursor:pointer;font-weight:bold}.section{padding:55px 6%;max-width:1400px;margin:auto}.section-title{display:flex;justify-content:space-between;align-items:end}.section h2{margin:5px 0 24px}.muted,#catalog-status{color:var(--muted);font-size:14px}.movie-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:18px}.movie{min-height:260px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel);cursor:pointer;text-align:left;padding:0;color:white}.poster{
+:root{--bg:#0b1320;--panel:#111d2d;--line:#2a3d56;--text:#edf5ff;--muted:#9aaabd;--blue:#1688f5;--gold:#ffc653;--danger:#573442}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px Arial,sans-serif}.nav{height:70px;padding:0 6%;display:flex;align-items:center;gap:32px;background:#0d1827;border-bottom:1px solid #1d3046;position:sticky;top:0;z-index:5}.brand{font-weight:800;color:white;text-decoration:none;letter-spacing:.5px}.brand span{color:var(--blue)}nav{display:flex;gap:23px;flex:1}nav a{color:#c0cedd;text-decoration:none;font-size:14px}.outline,.link-button{background:transparent;border:1px solid #54708c;color:#e8f2ff;padding:10px 16px;border-radius:6px;cursor:pointer}.hero{
+    min-height:520px;
+    padding:90px 9%;
+    display:flex;
+    align-items:center;
+    position:relative;
+    background:
+        linear-gradient(90deg, #07111de8 0%, #07111db5 35%, #07111d55 70%),
+        url("../img/cine-banner.jpeg");
+    background-size:cover;
+    background-position:center;
+}
+
+.hero>div{
+    max-width:650px;
+    position:relative;
+    z-index:1;
+}.eyebrow{color:var(--gold);font-size:12px;font-weight:bold;letter-spacing:1.5px}.hero h1{font-size:clamp(36px,5vw,65px);margin:12px 0}.hero p{line-height:1.55;color:#c0cedd}.primary{display:inline-block;background:var(--blue);color:white;border:0;padding:12px 20px;border-radius:6px;text-decoration:none;cursor:pointer;font-weight:bold}.section{padding:55px 6%;max-width:1400px;margin:auto}.section-title{display:flex;justify-content:space-between;align-items:end}.section h2{margin:5px 0 24px}.muted,#catalog-status{color:var(--muted);font-size:14px}.movie-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:18px}.movie{min-height:260px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel);cursor:pointer;text-align:left;padding:0;color:white}.poster{
     height:260px;
     overflow:hidden;
     background:#071422;
